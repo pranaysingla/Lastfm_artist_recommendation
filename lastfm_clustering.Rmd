@@ -2,7 +2,9 @@
 title: "Lastfm_Clustering"
 author: "Pranay Singla"
 date: "1/6/2021"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -12,6 +14,10 @@ knitr::opts_chunk$set(echo = TRUE)
 The aim of this code file is to cluster users from lastfm dataset into groups based on listening preferences. This analysis can be used to identify users with similar listerning preferences as well as their artist/genre preferences.
 
 ```{r}
+# loading libraries
+library(forcats)
+library(dplyr)
+library(ggplot2)
 # reading data
 lastfm = read.csv("lastfm1.csv")
 ```
@@ -69,25 +75,35 @@ Finding top 6 artists in different clusters
 ```{r}
 
 # Display top 6 artists in cluster 3:
-print('Top 6 artists in Cluster 3')
-tail(sort( colMeans(lastfm[clust.groups == 3,-1]), decreasing = F ), 6)
-
+top_6 <- tail(sort( colMeans(lastfm[clust.groups == 3,-1]), decreasing = F ), 6)
+top_6 <- data.frame(artist = names(top_6), value = top_6, row.names = NULL)
+top_6 <- top_6[order(-top_6$value),]
+top_6 %>%
+  mutate(artist = fct_reorder(artist, value)) %>%
+  ggplot( aes(x=artist, y=value)) +
+    ggtitle('Top 6 artists in cluster 3') +
+    geom_bar(stat="identity", fill="#f68060", alpha=.6, width=.4) +
+    coord_flip() +
+    xlab("") +
+    theme_bw()
 ```
 
-Users in cluster 3 prefer to listen to classic rock artists
+**Users in cluster 3 prefer to listen to classic rock artists**
 
 ```{r}
 # Display top 6 artists in cluster 4:
-print('Top 6 artists in Cluster 4')
-tail(sort( colMeans(lastfm[clust.groups == 4,-1]), decreasing = F ), 6)
+
+top_6 <- tail(sort( colMeans(lastfm[clust.groups == 4,-1]), decreasing = F ), 6)
+top_6 <- data.frame(artist = names(top_6), value = top_6, row.names = NULL)
+top_6 <- top_6[order(-top_6$value),]
+top_6 %>%
+  mutate(artist = fct_reorder(artist, value)) %>%
+  ggplot( aes(x=artist, y=value)) +
+    ggtitle('Top 6 artists in cluster 4') +
+    geom_bar(stat="identity", fill="#f68060", alpha=.6, width=.4) +
+    coord_flip() +
+    xlab("") +
+    theme_bw()
 ```
 
-Users in cluster 4 prefer to listen to pop artists
-
-```{r}
-# Display top 6 artists in cluster 5:
-print('Top 6 artists in Cluster 5')
-tail(sort( colMeans(lastfm[clust.groups == 5,-1]), decreasing = F ), 6)
-```
-
-Users in cluster 5 prefer to listen to rap artists
+**Users in cluster 4 prefer to listen to rap artists**
